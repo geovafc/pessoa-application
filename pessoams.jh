@@ -21,4 +21,5 @@ relationship OneToMany {
 }
 
 service * with serviceClass
+dto * with mapstruct
 paginate PessoaFisica with pagination

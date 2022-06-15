@@ -8,6 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.backendsucesso.pessoa.IntegrationTest;
 import com.backendsucesso.pessoa.domain.PessoaFisica;
 import com.backendsucesso.pessoa.repository.PessoaFisicaRepository;
+import com.backendsucesso.pessoa.service.dto.PessoaFisicaDTO;
+import com.backendsucesso.pessoa.service.mapper.PessoaFisicaMapper;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
@@ -56,6 +58,9 @@ class PessoaFisicaResourceIT {
 
     @Autowired
     private PessoaFisicaRepository pessoaFisicaRepository;
+
+    @Autowired
+    private PessoaFisicaMapper pessoaFisicaMapper;
 
     @Autowired
     private EntityManager em;
@@ -107,8 +112,11 @@ class PessoaFisicaResourceIT {
     void createPessoaFisica() throws Exception {
         int databaseSizeBeforeCreate = pessoaFisicaRepository.findAll().size();
         // Create the PessoaFisica
+        PessoaFisicaDTO pessoaFisicaDTO = pessoaFisicaMapper.toDto(pessoaFisica);
         restPessoaFisicaMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(pessoaFisica)))
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(pessoaFisicaDTO))
+            )
             .andExpect(status().isCreated());
 
         // Validate the PessoaFisica in the database
@@ -127,12 +135,15 @@ class PessoaFisicaResourceIT {
     void createPessoaFisicaWithExistingId() throws Exception {
         // Create the PessoaFisica with an existing ID
         pessoaFisica.setId(1L);
+        PessoaFisicaDTO pessoaFisicaDTO = pessoaFisicaMapper.toDto(pessoaFisica);
 
         int databaseSizeBeforeCreate = pessoaFisicaRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restPessoaFisicaMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(pessoaFisica)))
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(pessoaFisicaDTO))
+            )
             .andExpect(status().isBadRequest());
 
         // Validate the PessoaFisica in the database
@@ -148,9 +159,12 @@ class PessoaFisicaResourceIT {
         pessoaFisica.setNome(null);
 
         // Create the PessoaFisica, which fails.
+        PessoaFisicaDTO pessoaFisicaDTO = pessoaFisicaMapper.toDto(pessoaFisica);
 
         restPessoaFisicaMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(pessoaFisica)))
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(pessoaFisicaDTO))
+            )
             .andExpect(status().isBadRequest());
 
         List<PessoaFisica> pessoaFisicaList = pessoaFisicaRepository.findAll();
@@ -165,9 +179,12 @@ class PessoaFisicaResourceIT {
         pessoaFisica.setCpf(null);
 
         // Create the PessoaFisica, which fails.
+        PessoaFisicaDTO pessoaFisicaDTO = pessoaFisicaMapper.toDto(pessoaFisica);
 
         restPessoaFisicaMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(pessoaFisica)))
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(pessoaFisicaDTO))
+            )
             .andExpect(status().isBadRequest());
 
         List<PessoaFisica> pessoaFisicaList = pessoaFisicaRepository.findAll();
@@ -182,9 +199,12 @@ class PessoaFisicaResourceIT {
         pessoaFisica.setIdade(null);
 
         // Create the PessoaFisica, which fails.
+        PessoaFisicaDTO pessoaFisicaDTO = pessoaFisicaMapper.toDto(pessoaFisica);
 
         restPessoaFisicaMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(pessoaFisica)))
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(pessoaFisicaDTO))
+            )
             .andExpect(status().isBadRequest());
 
         List<PessoaFisica> pessoaFisicaList = pessoaFisicaRepository.findAll();
@@ -199,9 +219,12 @@ class PessoaFisicaResourceIT {
         pessoaFisica.setEmail(null);
 
         // Create the PessoaFisica, which fails.
+        PessoaFisicaDTO pessoaFisicaDTO = pessoaFisicaMapper.toDto(pessoaFisica);
 
         restPessoaFisicaMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(pessoaFisica)))
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(pessoaFisicaDTO))
+            )
             .andExpect(status().isBadRequest());
 
         List<PessoaFisica> pessoaFisicaList = pessoaFisicaRepository.findAll();
@@ -216,9 +239,12 @@ class PessoaFisicaResourceIT {
         pessoaFisica.setTelefone(null);
 
         // Create the PessoaFisica, which fails.
+        PessoaFisicaDTO pessoaFisicaDTO = pessoaFisicaMapper.toDto(pessoaFisica);
 
         restPessoaFisicaMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(pessoaFisica)))
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(pessoaFisicaDTO))
+            )
             .andExpect(status().isBadRequest());
 
         List<PessoaFisica> pessoaFisicaList = pessoaFisicaRepository.findAll();
@@ -283,12 +309,13 @@ class PessoaFisicaResourceIT {
         // Disconnect from session so that the updates on updatedPessoaFisica are not directly saved in db
         em.detach(updatedPessoaFisica);
         updatedPessoaFisica.nome(UPDATED_NOME).cpf(UPDATED_CPF).idade(UPDATED_IDADE).email(UPDATED_EMAIL).telefone(UPDATED_TELEFONE);
+        PessoaFisicaDTO pessoaFisicaDTO = pessoaFisicaMapper.toDto(updatedPessoaFisica);
 
         restPessoaFisicaMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedPessoaFisica.getId())
+                put(ENTITY_API_URL_ID, pessoaFisicaDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedPessoaFisica))
+                    .content(TestUtil.convertObjectToJsonBytes(pessoaFisicaDTO))
             )
             .andExpect(status().isOk());
 
@@ -309,12 +336,15 @@ class PessoaFisicaResourceIT {
         int databaseSizeBeforeUpdate = pessoaFisicaRepository.findAll().size();
         pessoaFisica.setId(count.incrementAndGet());
 
+        // Create the PessoaFisica
+        PessoaFisicaDTO pessoaFisicaDTO = pessoaFisicaMapper.toDto(pessoaFisica);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPessoaFisicaMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, pessoaFisica.getId())
+                put(ENTITY_API_URL_ID, pessoaFisicaDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(pessoaFisica))
+                    .content(TestUtil.convertObjectToJsonBytes(pessoaFisicaDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -329,12 +359,15 @@ class PessoaFisicaResourceIT {
         int databaseSizeBeforeUpdate = pessoaFisicaRepository.findAll().size();
         pessoaFisica.setId(count.incrementAndGet());
 
+        // Create the PessoaFisica
+        PessoaFisicaDTO pessoaFisicaDTO = pessoaFisicaMapper.toDto(pessoaFisica);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPessoaFisicaMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(pessoaFisica))
+                    .content(TestUtil.convertObjectToJsonBytes(pessoaFisicaDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -349,9 +382,14 @@ class PessoaFisicaResourceIT {
         int databaseSizeBeforeUpdate = pessoaFisicaRepository.findAll().size();
         pessoaFisica.setId(count.incrementAndGet());
 
+        // Create the PessoaFisica
+        PessoaFisicaDTO pessoaFisicaDTO = pessoaFisicaMapper.toDto(pessoaFisica);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPessoaFisicaMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(pessoaFisica)))
+            .perform(
+                put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(pessoaFisicaDTO))
+            )
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the PessoaFisica in the database
@@ -431,12 +469,15 @@ class PessoaFisicaResourceIT {
         int databaseSizeBeforeUpdate = pessoaFisicaRepository.findAll().size();
         pessoaFisica.setId(count.incrementAndGet());
 
+        // Create the PessoaFisica
+        PessoaFisicaDTO pessoaFisicaDTO = pessoaFisicaMapper.toDto(pessoaFisica);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPessoaFisicaMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, pessoaFisica.getId())
+                patch(ENTITY_API_URL_ID, pessoaFisicaDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(pessoaFisica))
+                    .content(TestUtil.convertObjectToJsonBytes(pessoaFisicaDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -451,12 +492,15 @@ class PessoaFisicaResourceIT {
         int databaseSizeBeforeUpdate = pessoaFisicaRepository.findAll().size();
         pessoaFisica.setId(count.incrementAndGet());
 
+        // Create the PessoaFisica
+        PessoaFisicaDTO pessoaFisicaDTO = pessoaFisicaMapper.toDto(pessoaFisica);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPessoaFisicaMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(pessoaFisica))
+                    .content(TestUtil.convertObjectToJsonBytes(pessoaFisicaDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -471,10 +515,15 @@ class PessoaFisicaResourceIT {
         int databaseSizeBeforeUpdate = pessoaFisicaRepository.findAll().size();
         pessoaFisica.setId(count.incrementAndGet());
 
+        // Create the PessoaFisica
+        PessoaFisicaDTO pessoaFisicaDTO = pessoaFisicaMapper.toDto(pessoaFisica);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPessoaFisicaMockMvc
             .perform(
-                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(pessoaFisica))
+                patch(ENTITY_API_URL)
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(pessoaFisicaDTO))
             )
             .andExpect(status().isMethodNotAllowed());
 

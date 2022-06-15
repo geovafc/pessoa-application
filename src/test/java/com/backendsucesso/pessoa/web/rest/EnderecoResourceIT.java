@@ -9,6 +9,8 @@ import com.backendsucesso.pessoa.IntegrationTest;
 import com.backendsucesso.pessoa.domain.Endereco;
 import com.backendsucesso.pessoa.domain.PessoaFisica;
 import com.backendsucesso.pessoa.repository.EnderecoRepository;
+import com.backendsucesso.pessoa.service.dto.EnderecoDTO;
+import com.backendsucesso.pessoa.service.mapper.EnderecoMapper;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
@@ -54,6 +56,9 @@ class EnderecoResourceIT {
 
     @Autowired
     private EnderecoRepository enderecoRepository;
+
+    @Autowired
+    private EnderecoMapper enderecoMapper;
 
     @Autowired
     private EntityManager em;
@@ -115,8 +120,9 @@ class EnderecoResourceIT {
     void createEndereco() throws Exception {
         int databaseSizeBeforeCreate = enderecoRepository.findAll().size();
         // Create the Endereco
+        EnderecoDTO enderecoDTO = enderecoMapper.toDto(endereco);
         restEnderecoMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(endereco)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(enderecoDTO)))
             .andExpect(status().isCreated());
 
         // Validate the Endereco in the database
@@ -134,12 +140,13 @@ class EnderecoResourceIT {
     void createEnderecoWithExistingId() throws Exception {
         // Create the Endereco with an existing ID
         endereco.setId(1L);
+        EnderecoDTO enderecoDTO = enderecoMapper.toDto(endereco);
 
         int databaseSizeBeforeCreate = enderecoRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restEnderecoMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(endereco)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(enderecoDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the Endereco in the database
@@ -155,9 +162,10 @@ class EnderecoResourceIT {
         endereco.setLogradouro(null);
 
         // Create the Endereco, which fails.
+        EnderecoDTO enderecoDTO = enderecoMapper.toDto(endereco);
 
         restEnderecoMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(endereco)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(enderecoDTO)))
             .andExpect(status().isBadRequest());
 
         List<Endereco> enderecoList = enderecoRepository.findAll();
@@ -172,9 +180,10 @@ class EnderecoResourceIT {
         endereco.setCep(null);
 
         // Create the Endereco, which fails.
+        EnderecoDTO enderecoDTO = enderecoMapper.toDto(endereco);
 
         restEnderecoMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(endereco)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(enderecoDTO)))
             .andExpect(status().isBadRequest());
 
         List<Endereco> enderecoList = enderecoRepository.findAll();
@@ -189,9 +198,10 @@ class EnderecoResourceIT {
         endereco.setCidade(null);
 
         // Create the Endereco, which fails.
+        EnderecoDTO enderecoDTO = enderecoMapper.toDto(endereco);
 
         restEnderecoMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(endereco)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(enderecoDTO)))
             .andExpect(status().isBadRequest());
 
         List<Endereco> enderecoList = enderecoRepository.findAll();
@@ -206,9 +216,10 @@ class EnderecoResourceIT {
         endereco.setEstado(null);
 
         // Create the Endereco, which fails.
+        EnderecoDTO enderecoDTO = enderecoMapper.toDto(endereco);
 
         restEnderecoMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(endereco)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(enderecoDTO)))
             .andExpect(status().isBadRequest());
 
         List<Endereco> enderecoList = enderecoRepository.findAll();
@@ -271,12 +282,13 @@ class EnderecoResourceIT {
         // Disconnect from session so that the updates on updatedEndereco are not directly saved in db
         em.detach(updatedEndereco);
         updatedEndereco.logradouro(UPDATED_LOGRADOURO).cep(UPDATED_CEP).cidade(UPDATED_CIDADE).estado(UPDATED_ESTADO);
+        EnderecoDTO enderecoDTO = enderecoMapper.toDto(updatedEndereco);
 
         restEnderecoMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedEndereco.getId())
+                put(ENTITY_API_URL_ID, enderecoDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedEndereco))
+                    .content(TestUtil.convertObjectToJsonBytes(enderecoDTO))
             )
             .andExpect(status().isOk());
 
@@ -296,12 +308,15 @@ class EnderecoResourceIT {
         int databaseSizeBeforeUpdate = enderecoRepository.findAll().size();
         endereco.setId(count.incrementAndGet());
 
+        // Create the Endereco
+        EnderecoDTO enderecoDTO = enderecoMapper.toDto(endereco);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restEnderecoMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, endereco.getId())
+                put(ENTITY_API_URL_ID, enderecoDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(endereco))
+                    .content(TestUtil.convertObjectToJsonBytes(enderecoDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -316,12 +331,15 @@ class EnderecoResourceIT {
         int databaseSizeBeforeUpdate = enderecoRepository.findAll().size();
         endereco.setId(count.incrementAndGet());
 
+        // Create the Endereco
+        EnderecoDTO enderecoDTO = enderecoMapper.toDto(endereco);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restEnderecoMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(endereco))
+                    .content(TestUtil.convertObjectToJsonBytes(enderecoDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -336,9 +354,12 @@ class EnderecoResourceIT {
         int databaseSizeBeforeUpdate = enderecoRepository.findAll().size();
         endereco.setId(count.incrementAndGet());
 
+        // Create the Endereco
+        EnderecoDTO enderecoDTO = enderecoMapper.toDto(endereco);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restEnderecoMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(endereco)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(enderecoDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Endereco in the database
@@ -416,12 +437,15 @@ class EnderecoResourceIT {
         int databaseSizeBeforeUpdate = enderecoRepository.findAll().size();
         endereco.setId(count.incrementAndGet());
 
+        // Create the Endereco
+        EnderecoDTO enderecoDTO = enderecoMapper.toDto(endereco);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restEnderecoMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, endereco.getId())
+                patch(ENTITY_API_URL_ID, enderecoDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(endereco))
+                    .content(TestUtil.convertObjectToJsonBytes(enderecoDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -436,12 +460,15 @@ class EnderecoResourceIT {
         int databaseSizeBeforeUpdate = enderecoRepository.findAll().size();
         endereco.setId(count.incrementAndGet());
 
+        // Create the Endereco
+        EnderecoDTO enderecoDTO = enderecoMapper.toDto(endereco);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restEnderecoMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(endereco))
+                    .content(TestUtil.convertObjectToJsonBytes(enderecoDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -456,9 +483,14 @@ class EnderecoResourceIT {
         int databaseSizeBeforeUpdate = enderecoRepository.findAll().size();
         endereco.setId(count.incrementAndGet());
 
+        // Create the Endereco
+        EnderecoDTO enderecoDTO = enderecoMapper.toDto(endereco);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restEnderecoMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(endereco)))
+            .perform(
+                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(enderecoDTO))
+            )
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Endereco in the database

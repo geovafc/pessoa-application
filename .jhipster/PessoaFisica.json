@@ -3,7 +3,7 @@
   "changelogDate": "20220615031032",
   "clientRootFolder": "pessoaApplication",
   "databaseType": "sql",
-  "dto": "no",
+  "dto": "mapstruct",
   "embedded": false,
   "entityTableName": "pessoa_fisica",
   "fields": [
