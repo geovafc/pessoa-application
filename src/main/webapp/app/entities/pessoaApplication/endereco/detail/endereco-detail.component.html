@@ -1,0 +1,50 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="endereco">
+      <h2 data-cy="enderecoDetailsHeading"><span>Endereco</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span>ID</span></dt>
+        <dd>
+          <span>{{ endereco.id }}</span>
+        </dd>
+        <dt><span>Logradouro</span></dt>
+        <dd>
+          <span>{{ endereco.logradouro }}</span>
+        </dd>
+        <dt><span>Cep</span></dt>
+        <dd>
+          <span>{{ endereco.cep }}</span>
+        </dd>
+        <dt><span>Cidade</span></dt>
+        <dd>
+          <span>{{ endereco.cidade }}</span>
+        </dd>
+        <dt><span>Estado</span></dt>
+        <dd>
+          <span>{{ endereco.estado }}</span>
+        </dd>
+        <dt><span>Pessoa Fisica</span></dt>
+        <dd>
+          <div *ngIf="endereco.pessoaFisica">
+            <a [routerLink]="['/pessoa-fisica', endereco.pessoaFisica?.id, 'view']">{{ endereco.pessoaFisica?.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/pessoaapplication/endereco', endereco.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

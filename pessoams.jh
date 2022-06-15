@@ -1,0 +1,24 @@
+entity PessoaFisica {
+	nome String required
+    cpf String required
+    idade String required
+    email String required
+    telefone String required
+}
+
+entity Endereco {
+    logradouro String required
+    cep String required
+    cidade String required
+    estado String required
+}
+
+
+relationship OneToMany {
+    
+    PessoaFisica{endereco} to Endereco{pessoaFisica required},
+
+}
+
+service * with serviceClass
+paginate PessoaFisica with pagination
