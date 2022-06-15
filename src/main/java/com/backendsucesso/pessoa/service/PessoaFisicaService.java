@@ -2,6 +2,8 @@ package com.backendsucesso.pessoa.service;
 
 import com.backendsucesso.pessoa.domain.PessoaFisica;
 import com.backendsucesso.pessoa.repository.PessoaFisicaRepository;
+import com.backendsucesso.pessoa.service.dto.PessoaFisicaDTO;
+import com.backendsucesso.pessoa.service.mapper.PessoaFisicaMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,63 +23,57 @@ public class PessoaFisicaService {
 
     private final PessoaFisicaRepository pessoaFisicaRepository;
 
-    public PessoaFisicaService(PessoaFisicaRepository pessoaFisicaRepository) {
+    private final PessoaFisicaMapper pessoaFisicaMapper;
+
+    public PessoaFisicaService(PessoaFisicaRepository pessoaFisicaRepository, PessoaFisicaMapper pessoaFisicaMapper) {
         this.pessoaFisicaRepository = pessoaFisicaRepository;
+        this.pessoaFisicaMapper = pessoaFisicaMapper;
     }
 
     /**
      * Save a pessoaFisica.
      *
-     * @param pessoaFisica the entity to save.
+     * @param pessoaFisicaDTO the entity to save.
      * @return the persisted entity.
      */
-    public PessoaFisica save(PessoaFisica pessoaFisica) {
-        log.debug("Request to save PessoaFisica : {}", pessoaFisica);
-        return pessoaFisicaRepository.save(pessoaFisica);
+    public PessoaFisicaDTO save(PessoaFisicaDTO pessoaFisicaDTO) {
+        log.debug("Request to save PessoaFisica : {}", pessoaFisicaDTO);
+        PessoaFisica pessoaFisica = pessoaFisicaMapper.toEntity(pessoaFisicaDTO);
+        pessoaFisica = pessoaFisicaRepository.save(pessoaFisica);
+        return pessoaFisicaMapper.toDto(pessoaFisica);
     }
 
     /**
      * Update a pessoaFisica.
      *
-     * @param pessoaFisica the entity to save.
+     * @param pessoaFisicaDTO the entity to save.
      * @return the persisted entity.
      */
-    public PessoaFisica update(PessoaFisica pessoaFisica) {
-        log.debug("Request to save PessoaFisica : {}", pessoaFisica);
-        return pessoaFisicaRepository.save(pessoaFisica);
+    public PessoaFisicaDTO update(PessoaFisicaDTO pessoaFisicaDTO) {
+        log.debug("Request to save PessoaFisica : {}", pessoaFisicaDTO);
+        PessoaFisica pessoaFisica = pessoaFisicaMapper.toEntity(pessoaFisicaDTO);
+        pessoaFisica = pessoaFisicaRepository.save(pessoaFisica);
+        return pessoaFisicaMapper.toDto(pessoaFisica);
     }
 
     /**
      * Partially update a pessoaFisica.
      *
-     * @param pessoaFisica the entity to update partially.
+     * @param pessoaFisicaDTO the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<PessoaFisica> partialUpdate(PessoaFisica pessoaFisica) {
-        log.debug("Request to partially update PessoaFisica : {}", pessoaFisica);
+    public Optional<PessoaFisicaDTO> partialUpdate(PessoaFisicaDTO pessoaFisicaDTO) {
+        log.debug("Request to partially update PessoaFisica : {}", pessoaFisicaDTO);
 
         return pessoaFisicaRepository
-            .findById(pessoaFisica.getId())
+            .findById(pessoaFisicaDTO.getId())
             .map(existingPessoaFisica -> {
-                if (pessoaFisica.getNome() != null) {
-                    existingPessoaFisica.setNome(pessoaFisica.getNome());
-                }
-                if (pessoaFisica.getCpf() != null) {
-                    existingPessoaFisica.setCpf(pessoaFisica.getCpf());
-                }
-                if (pessoaFisica.getIdade() != null) {
-                    existingPessoaFisica.setIdade(pessoaFisica.getIdade());
-                }
-                if (pessoaFisica.getEmail() != null) {
-                    existingPessoaFisica.setEmail(pessoaFisica.getEmail());
-                }
-                if (pessoaFisica.getTelefone() != null) {
-                    existingPessoaFisica.setTelefone(pessoaFisica.getTelefone());
-                }
+                pessoaFisicaMapper.partialUpdate(existingPessoaFisica, pessoaFisicaDTO);
 
                 return existingPessoaFisica;
             })
-            .map(pessoaFisicaRepository::save);
+            .map(pessoaFisicaRepository::save)
+            .map(pessoaFisicaMapper::toDto);
     }
 
     /**
@@ -87,9 +83,9 @@ public class PessoaFisicaService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<PessoaFisica> findAll(Pageable pageable) {
+    public Page<PessoaFisicaDTO> findAll(Pageable pageable) {
         log.debug("Request to get all PessoaFisicas");
-        return pessoaFisicaRepository.findAll(pageable);
+        return pessoaFisicaRepository.findAll(pageable).map(pessoaFisicaMapper::toDto);
     }
 
     /**
@@ -99,9 +95,9 @@ public class PessoaFisicaService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<PessoaFisica> findOne(Long id) {
+    public Optional<PessoaFisicaDTO> findOne(Long id) {
         log.debug("Request to get PessoaFisica : {}", id);
-        return pessoaFisicaRepository.findById(id);
+        return pessoaFisicaRepository.findById(id).map(pessoaFisicaMapper::toDto);
     }
 
     /**

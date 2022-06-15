@@ -2,8 +2,12 @@ package com.backendsucesso.pessoa.service;
 
 import com.backendsucesso.pessoa.domain.Endereco;
 import com.backendsucesso.pessoa.repository.EnderecoRepository;
+import com.backendsucesso.pessoa.service.dto.EnderecoDTO;
+import com.backendsucesso.pessoa.service.mapper.EnderecoMapper;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -20,60 +24,57 @@ public class EnderecoService {
 
     private final EnderecoRepository enderecoRepository;
 
-    public EnderecoService(EnderecoRepository enderecoRepository) {
+    private final EnderecoMapper enderecoMapper;
+
+    public EnderecoService(EnderecoRepository enderecoRepository, EnderecoMapper enderecoMapper) {
         this.enderecoRepository = enderecoRepository;
+        this.enderecoMapper = enderecoMapper;
     }
 
     /**
      * Save a endereco.
      *
-     * @param endereco the entity to save.
+     * @param enderecoDTO the entity to save.
      * @return the persisted entity.
      */
-    public Endereco save(Endereco endereco) {
-        log.debug("Request to save Endereco : {}", endereco);
-        return enderecoRepository.save(endereco);
+    public EnderecoDTO save(EnderecoDTO enderecoDTO) {
+        log.debug("Request to save Endereco : {}", enderecoDTO);
+        Endereco endereco = enderecoMapper.toEntity(enderecoDTO);
+        endereco = enderecoRepository.save(endereco);
+        return enderecoMapper.toDto(endereco);
     }
 
     /**
      * Update a endereco.
      *
-     * @param endereco the entity to save.
+     * @param enderecoDTO the entity to save.
      * @return the persisted entity.
      */
-    public Endereco update(Endereco endereco) {
-        log.debug("Request to save Endereco : {}", endereco);
-        return enderecoRepository.save(endereco);
+    public EnderecoDTO update(EnderecoDTO enderecoDTO) {
+        log.debug("Request to save Endereco : {}", enderecoDTO);
+        Endereco endereco = enderecoMapper.toEntity(enderecoDTO);
+        endereco = enderecoRepository.save(endereco);
+        return enderecoMapper.toDto(endereco);
     }
 
     /**
      * Partially update a endereco.
      *
-     * @param endereco the entity to update partially.
+     * @param enderecoDTO the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<Endereco> partialUpdate(Endereco endereco) {
-        log.debug("Request to partially update Endereco : {}", endereco);
+    public Optional<EnderecoDTO> partialUpdate(EnderecoDTO enderecoDTO) {
+        log.debug("Request to partially update Endereco : {}", enderecoDTO);
 
         return enderecoRepository
-            .findById(endereco.getId())
+            .findById(enderecoDTO.getId())
             .map(existingEndereco -> {
-                if (endereco.getLogradouro() != null) {
-                    existingEndereco.setLogradouro(endereco.getLogradouro());
-                }
-                if (endereco.getCep() != null) {
-                    existingEndereco.setCep(endereco.getCep());
-                }
-                if (endereco.getCidade() != null) {
-                    existingEndereco.setCidade(endereco.getCidade());
-                }
-                if (endereco.getEstado() != null) {
-                    existingEndereco.setEstado(endereco.getEstado());
-                }
+                enderecoMapper.partialUpdate(existingEndereco, enderecoDTO);
 
                 return existingEndereco;
             })
-            .map(enderecoRepository::save);
+            .map(enderecoRepository::save)
+            .map(enderecoMapper::toDto);
     }
 
     /**
@@ -82,9 +83,9 @@ public class EnderecoService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public List<Endereco> findAll() {
+    public List<EnderecoDTO> findAll() {
         log.debug("Request to get all Enderecos");
-        return enderecoRepository.findAll();
+        return enderecoRepository.findAll().stream().map(enderecoMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     /**
@@ -94,9 +95,9 @@ public class EnderecoService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<Endereco> findOne(Long id) {
+    public Optional<EnderecoDTO> findOne(Long id) {
         log.debug("Request to get Endereco : {}", id);
-        return enderecoRepository.findById(id);
+        return enderecoRepository.findById(id).map(enderecoMapper::toDto);
     }
 
     /**

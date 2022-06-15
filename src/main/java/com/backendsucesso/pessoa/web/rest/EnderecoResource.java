@@ -1,8 +1,8 @@
 package com.backendsucesso.pessoa.web.rest;
 
-import com.backendsucesso.pessoa.domain.Endereco;
 import com.backendsucesso.pessoa.repository.EnderecoRepository;
 import com.backendsucesso.pessoa.service.EnderecoService;
+import com.backendsucesso.pessoa.service.dto.EnderecoDTO;
 import com.backendsucesso.pessoa.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -45,17 +45,17 @@ public class EnderecoResource {
     /**
      * {@code POST  /enderecos} : Create a new endereco.
      *
-     * @param endereco the endereco to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new endereco, or with status {@code 400 (Bad Request)} if the endereco has already an ID.
+     * @param enderecoDTO the enderecoDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new enderecoDTO, or with status {@code 400 (Bad Request)} if the endereco has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/enderecos")
-    public ResponseEntity<Endereco> createEndereco(@Valid @RequestBody Endereco endereco) throws URISyntaxException {
-        log.debug("REST request to save Endereco : {}", endereco);
-        if (endereco.getId() != null) {
+    public ResponseEntity<EnderecoDTO> createEndereco(@Valid @RequestBody EnderecoDTO enderecoDTO) throws URISyntaxException {
+        log.debug("REST request to save Endereco : {}", enderecoDTO);
+        if (enderecoDTO.getId() != null) {
             throw new BadRequestAlertException("A new endereco cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Endereco result = enderecoService.save(endereco);
+        EnderecoDTO result = enderecoService.save(enderecoDTO);
         return ResponseEntity
             .created(new URI("/api/enderecos/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
@@ -65,23 +65,23 @@ public class EnderecoResource {
     /**
      * {@code PUT  /enderecos/:id} : Updates an existing endereco.
      *
-     * @param id the id of the endereco to save.
-     * @param endereco the endereco to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated endereco,
-     * or with status {@code 400 (Bad Request)} if the endereco is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the endereco couldn't be updated.
+     * @param id the id of the enderecoDTO to save.
+     * @param enderecoDTO the enderecoDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated enderecoDTO,
+     * or with status {@code 400 (Bad Request)} if the enderecoDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the enderecoDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/enderecos/{id}")
-    public ResponseEntity<Endereco> updateEndereco(
+    public ResponseEntity<EnderecoDTO> updateEndereco(
         @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody Endereco endereco
+        @Valid @RequestBody EnderecoDTO enderecoDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update Endereco : {}, {}", id, endereco);
-        if (endereco.getId() == null) {
+        log.debug("REST request to update Endereco : {}, {}", id, enderecoDTO);
+        if (enderecoDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, endereco.getId())) {
+        if (!Objects.equals(id, enderecoDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -89,34 +89,34 @@ public class EnderecoResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Endereco result = enderecoService.update(endereco);
+        EnderecoDTO result = enderecoService.update(enderecoDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, endereco.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, enderecoDTO.getId().toString()))
             .body(result);
     }
 
     /**
      * {@code PATCH  /enderecos/:id} : Partial updates given fields of an existing endereco, field will ignore if it is null
      *
-     * @param id the id of the endereco to save.
-     * @param endereco the endereco to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated endereco,
-     * or with status {@code 400 (Bad Request)} if the endereco is not valid,
-     * or with status {@code 404 (Not Found)} if the endereco is not found,
-     * or with status {@code 500 (Internal Server Error)} if the endereco couldn't be updated.
+     * @param id the id of the enderecoDTO to save.
+     * @param enderecoDTO the enderecoDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated enderecoDTO,
+     * or with status {@code 400 (Bad Request)} if the enderecoDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the enderecoDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the enderecoDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/enderecos/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Endereco> partialUpdateEndereco(
+    public ResponseEntity<EnderecoDTO> partialUpdateEndereco(
         @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody Endereco endereco
+        @NotNull @RequestBody EnderecoDTO enderecoDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update Endereco partially : {}, {}", id, endereco);
-        if (endereco.getId() == null) {
+        log.debug("REST request to partial update Endereco partially : {}, {}", id, enderecoDTO);
+        if (enderecoDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, endereco.getId())) {
+        if (!Objects.equals(id, enderecoDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -124,11 +124,11 @@ public class EnderecoResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<Endereco> result = enderecoService.partialUpdate(endereco);
+        Optional<EnderecoDTO> result = enderecoService.partialUpdate(enderecoDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, endereco.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, enderecoDTO.getId().toString())
         );
     }
 
@@ -138,7 +138,7 @@ public class EnderecoResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of enderecos in body.
      */
     @GetMapping("/enderecos")
-    public List<Endereco> getAllEnderecos() {
+    public List<EnderecoDTO> getAllEnderecos() {
         log.debug("REST request to get all Enderecos");
         return enderecoService.findAll();
     }
@@ -146,20 +146,20 @@ public class EnderecoResource {
     /**
      * {@code GET  /enderecos/:id} : get the "id" endereco.
      *
-     * @param id the id of the endereco to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the endereco, or with status {@code 404 (Not Found)}.
+     * @param id the id of the enderecoDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the enderecoDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/enderecos/{id}")
-    public ResponseEntity<Endereco> getEndereco(@PathVariable Long id) {
+    public ResponseEntity<EnderecoDTO> getEndereco(@PathVariable Long id) {
         log.debug("REST request to get Endereco : {}", id);
-        Optional<Endereco> endereco = enderecoService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(endereco);
+        Optional<EnderecoDTO> enderecoDTO = enderecoService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(enderecoDTO);
     }
 
     /**
      * {@code DELETE  /enderecos/:id} : delete the "id" endereco.
      *
-     * @param id the id of the endereco to delete.
+     * @param id the id of the enderecoDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/enderecos/{id}")

@@ -3,7 +3,7 @@
   "changelogDate": "20220615031033",
   "clientRootFolder": "pessoaApplication",
   "databaseType": "sql",
-  "dto": "no",
+  "dto": "mapstruct",
   "embedded": false,
   "entityTableName": "endereco",
   "fields": [

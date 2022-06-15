@@ -1,8 +1,8 @@
 package com.backendsucesso.pessoa.web.rest;
 
-import com.backendsucesso.pessoa.domain.PessoaFisica;
 import com.backendsucesso.pessoa.repository.PessoaFisicaRepository;
 import com.backendsucesso.pessoa.service.PessoaFisicaService;
+import com.backendsucesso.pessoa.service.dto.PessoaFisicaDTO;
 import com.backendsucesso.pessoa.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -51,17 +51,18 @@ public class PessoaFisicaResource {
     /**
      * {@code POST  /pessoa-fisicas} : Create a new pessoaFisica.
      *
-     * @param pessoaFisica the pessoaFisica to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new pessoaFisica, or with status {@code 400 (Bad Request)} if the pessoaFisica has already an ID.
+     * @param pessoaFisicaDTO the pessoaFisicaDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new pessoaFisicaDTO, or with status {@code 400 (Bad Request)} if the pessoaFisica has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/pessoa-fisicas")
-    public ResponseEntity<PessoaFisica> createPessoaFisica(@Valid @RequestBody PessoaFisica pessoaFisica) throws URISyntaxException {
-        log.debug("REST request to save PessoaFisica : {}", pessoaFisica);
-        if (pessoaFisica.getId() != null) {
+    public ResponseEntity<PessoaFisicaDTO> createPessoaFisica(@Valid @RequestBody PessoaFisicaDTO pessoaFisicaDTO)
+        throws URISyntaxException {
+        log.debug("REST request to save PessoaFisica : {}", pessoaFisicaDTO);
+        if (pessoaFisicaDTO.getId() != null) {
             throw new BadRequestAlertException("A new pessoaFisica cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        PessoaFisica result = pessoaFisicaService.save(pessoaFisica);
+        PessoaFisicaDTO result = pessoaFisicaService.save(pessoaFisicaDTO);
         return ResponseEntity
             .created(new URI("/api/pessoa-fisicas/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
@@ -71,23 +72,23 @@ public class PessoaFisicaResource {
     /**
      * {@code PUT  /pessoa-fisicas/:id} : Updates an existing pessoaFisica.
      *
-     * @param id the id of the pessoaFisica to save.
-     * @param pessoaFisica the pessoaFisica to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated pessoaFisica,
-     * or with status {@code 400 (Bad Request)} if the pessoaFisica is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the pessoaFisica couldn't be updated.
+     * @param id the id of the pessoaFisicaDTO to save.
+     * @param pessoaFisicaDTO the pessoaFisicaDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated pessoaFisicaDTO,
+     * or with status {@code 400 (Bad Request)} if the pessoaFisicaDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the pessoaFisicaDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/pessoa-fisicas/{id}")
-    public ResponseEntity<PessoaFisica> updatePessoaFisica(
+    public ResponseEntity<PessoaFisicaDTO> updatePessoaFisica(
         @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody PessoaFisica pessoaFisica
+        @Valid @RequestBody PessoaFisicaDTO pessoaFisicaDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update PessoaFisica : {}, {}", id, pessoaFisica);
-        if (pessoaFisica.getId() == null) {
+        log.debug("REST request to update PessoaFisica : {}, {}", id, pessoaFisicaDTO);
+        if (pessoaFisicaDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, pessoaFisica.getId())) {
+        if (!Objects.equals(id, pessoaFisicaDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -95,34 +96,34 @@ public class PessoaFisicaResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        PessoaFisica result = pessoaFisicaService.update(pessoaFisica);
+        PessoaFisicaDTO result = pessoaFisicaService.update(pessoaFisicaDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, pessoaFisica.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, pessoaFisicaDTO.getId().toString()))
             .body(result);
     }
 
     /**
      * {@code PATCH  /pessoa-fisicas/:id} : Partial updates given fields of an existing pessoaFisica, field will ignore if it is null
      *
-     * @param id the id of the pessoaFisica to save.
-     * @param pessoaFisica the pessoaFisica to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated pessoaFisica,
-     * or with status {@code 400 (Bad Request)} if the pessoaFisica is not valid,
-     * or with status {@code 404 (Not Found)} if the pessoaFisica is not found,
-     * or with status {@code 500 (Internal Server Error)} if the pessoaFisica couldn't be updated.
+     * @param id the id of the pessoaFisicaDTO to save.
+     * @param pessoaFisicaDTO the pessoaFisicaDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated pessoaFisicaDTO,
+     * or with status {@code 400 (Bad Request)} if the pessoaFisicaDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the pessoaFisicaDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the pessoaFisicaDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/pessoa-fisicas/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<PessoaFisica> partialUpdatePessoaFisica(
+    public ResponseEntity<PessoaFisicaDTO> partialUpdatePessoaFisica(
         @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody PessoaFisica pessoaFisica
+        @NotNull @RequestBody PessoaFisicaDTO pessoaFisicaDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update PessoaFisica partially : {}, {}", id, pessoaFisica);
-        if (pessoaFisica.getId() == null) {
+        log.debug("REST request to partial update PessoaFisica partially : {}, {}", id, pessoaFisicaDTO);
+        if (pessoaFisicaDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, pessoaFisica.getId())) {
+        if (!Objects.equals(id, pessoaFisicaDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -130,11 +131,11 @@ public class PessoaFisicaResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<PessoaFisica> result = pessoaFisicaService.partialUpdate(pessoaFisica);
+        Optional<PessoaFisicaDTO> result = pessoaFisicaService.partialUpdate(pessoaFisicaDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, pessoaFisica.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, pessoaFisicaDTO.getId().toString())
         );
     }
 
@@ -145,9 +146,9 @@ public class PessoaFisicaResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of pessoaFisicas in body.
      */
     @GetMapping("/pessoa-fisicas")
-    public ResponseEntity<List<PessoaFisica>> getAllPessoaFisicas(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<PessoaFisicaDTO>> getAllPessoaFisicas(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get a page of PessoaFisicas");
-        Page<PessoaFisica> page = pessoaFisicaService.findAll(pageable);
+        Page<PessoaFisicaDTO> page = pessoaFisicaService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -155,20 +156,20 @@ public class PessoaFisicaResource {
     /**
      * {@code GET  /pessoa-fisicas/:id} : get the "id" pessoaFisica.
      *
-     * @param id the id of the pessoaFisica to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the pessoaFisica, or with status {@code 404 (Not Found)}.
+     * @param id the id of the pessoaFisicaDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the pessoaFisicaDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/pessoa-fisicas/{id}")
-    public ResponseEntity<PessoaFisica> getPessoaFisica(@PathVariable Long id) {
+    public ResponseEntity<PessoaFisicaDTO> getPessoaFisica(@PathVariable Long id) {
         log.debug("REST request to get PessoaFisica : {}", id);
-        Optional<PessoaFisica> pessoaFisica = pessoaFisicaService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(pessoaFisica);
+        Optional<PessoaFisicaDTO> pessoaFisicaDTO = pessoaFisicaService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(pessoaFisicaDTO);
     }
 
     /**
      * {@code DELETE  /pessoa-fisicas/:id} : delete the "id" pessoaFisica.
      *
-     * @param id the id of the pessoaFisica to delete.
+     * @param id the id of the pessoaFisicaDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/pessoa-fisicas/{id}")
